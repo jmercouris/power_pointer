@@ -12,7 +12,7 @@ import java.util.Date;
 KeystrokeSimulator keySimulator; // Helper to simulate key events
 Date lastActionDate = new Date(); // Time last action occured
 Date currentDate; // Current date used for calculating time elapsed
-float actionRepeatTime = 1500; // Amount of time before ppnew action
+float actionRepeatTime = 1500; // Amount of time before new action
 
 
 //-----------------------------------------------------------------
