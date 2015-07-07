@@ -12,9 +12,9 @@ color[] userClr = new color[] {
 
 PVector vectorPoint = new PVector();
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------
 // Setup
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------
 void setup()
 {
   // Attempt to Instantiate SimpleOpenNI
@@ -101,10 +101,9 @@ void drawSkeleton(int userId)
   context.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_HIP, SimpleOpenNI.SKEL_RIGHT_KNEE);
   context.drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_KNEE, SimpleOpenNI.SKEL_RIGHT_FOOT);
 }
-
-// -----------------------------------------------------------------
+//-----------------------------------------------------------------
 // SimpleOpenNI events
-
+//-----------------------------------------------------------------
 void onNewUser(SimpleOpenNI curContext, int userId)
 {
   println("onNewUser - userId: " + userId);
