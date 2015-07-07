@@ -4,11 +4,15 @@
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.util.Date;
 
 //-----------------------------------------------------------------
 // Variable Definitions
 //-----------------------------------------------------------------
-KeystrokeSimulator keySimulator;
+KeystrokeSimulator keySimulator; // Helper to simulate key events
+Date lastActionDate = new Date(); // Time last action occured
+Date currentDate; // Current date used for calculating time elapsed
+float actionRepeatTime = 1500; // Amount of time before ppnew action
 
 
 //-----------------------------------------------------------------
@@ -18,7 +22,6 @@ void setup()
 {
   println("Initializing");
   keySimulator = new KeystrokeSimulator();
-
 }
 
 //-----------------------------------------------------------------
@@ -26,8 +29,7 @@ void setup()
 //-----------------------------------------------------------------
 void draw()
 {
-    slidePrevious();
-
+  slidePrevious();
 }
 
 //-----------------------------------------------------------------
@@ -69,9 +71,15 @@ public class KeystrokeSimulator {
       println(e);
     }
   }
+
   void simulateEvent(int inputKey) throws AWTException {
+    currentDate = new Date();
+    if (currentDate.getTime() - lastActionDate.getTime() > actionRepeatTime)
+    {
       robot.keyPress(inputKey);
       robot.keyRelease(inputKey);
+      lastActionDate = new Date();
+    }
   }
 }
 
