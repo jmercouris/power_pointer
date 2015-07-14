@@ -9,6 +9,7 @@ import SimpleOpenNI.*;
 import muthesius.net.*;
 import org.webbitserver.*;
 import java.awt.Toolkit;
+import ddf.minim.*;
 
 //-----------------------------------------------------------------
 // Variable Definitions
@@ -21,6 +22,9 @@ SimpleOpenNI  context; // Reference to openNI Library
 PVector vectorPoint = new PVector(); // Reusable vector for tracking
 PVector vectorCore = new PVector(); // Reusable vector for tracking
 WebSocketP5 socket; // Web socket for communicating with chrome
+Minim minim; // Minim Library Instance
+AudioPlayer song; // Audio player for feedback
+
 
 // Colors of incremental users
 color[] userClr = new color[] { 
@@ -57,6 +61,9 @@ void setup()
 
   // Setup Voice Control
   socket = new WebSocketP5(this, 8080);
+
+  // Setup Audio Playback
+  minim = new Minim(this);
 
   // Set Drawing information
   background(200, 0, 0);
@@ -190,11 +197,19 @@ void onNewUser(SimpleOpenNI curContext, int userId)
   println("\tstart tracking skeleton");
 
   curContext.startTrackingSkeleton(userId);
+
+  // Alert user tracking began
+  song = minim.loadFile("connected.mp3");
+  song.play();
 }
 
 void onLostUser(SimpleOpenNI curContext, int userId)
 {
   println("onLostUser - userId: " + userId);
+
+  // Alert user tracking lost
+  song = minim.loadFile("disconnected.mp3");
+  song.play();
 }
 
 void onVisibleUser(SimpleOpenNI curContext, int userId)
@@ -232,8 +247,9 @@ public class KeystrokeSimulator {
     currentDate = new Date();
     if (currentDate.getTime() - lastActionDate.getTime() > actionRepeatTime)
     {
-      // Inform the user
-      Toolkit.getDefaultToolkit().beep();
+      // Alert user command received
+      song = minim.loadFile("command.mp3");
+      song.play();
       robot.keyPress(inputKey);
       robot.keyRelease(inputKey);
       lastActionDate = new Date();
