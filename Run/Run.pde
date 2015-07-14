@@ -8,6 +8,7 @@ import java.util.Date;
 import SimpleOpenNI.*;
 import muthesius.net.*;
 import org.webbitserver.*;
+import java.awt.Toolkit;
 
 //-----------------------------------------------------------------
 // Variable Definitions
@@ -18,6 +19,7 @@ Date currentDate; // Current date used for calculating time elapsed
 float actionRepeatTime = 1500; // Amount of time before new action
 SimpleOpenNI  context; // Reference to openNI Library
 PVector vectorPoint = new PVector(); // Reusable vector for tracking
+PVector vectorCore = new PVector(); // Reusable vector for tracking
 WebSocketP5 socket; // Web socket for communicating with chrome
 
 // Colors of incremental users
@@ -82,13 +84,13 @@ void draw()
       {
         stroke(userClr[ (userList[i] - 1) % userClr.length ] );
         context.getJointPositionSkeleton(userList[i], SimpleOpenNI.SKEL_LEFT_HAND, vectorPoint);
-        if (vectorPoint.x < -500)
+        context.getJointPositionSkeleton(userList[i], SimpleOpenNI.SKEL_TORSO, vectorCore);
+        if (abs(vectorPoint.x - vectorCore.x) > 300 && vectorPoint.y > vectorCore.y)
         {
           slideNext();
         } 
         context.getJointPositionSkeleton(userList[i], SimpleOpenNI.SKEL_RIGHT_HAND, vectorPoint);
-        print("left hand" + vectorPoint.x);
-        if (vectorPoint.x > 500)
+        if (abs(vectorPoint.x - vectorCore.x) > 300 && vectorPoint.y > vectorCore.y)
         {
           slidePrevious();
         }
@@ -102,6 +104,7 @@ void draw()
 //-----------------------------------------------------------------
 void websocketOnMessage(WebSocketConnection con, String msg) {
   println(msg);
+
   if (msg.contains("next"))
   {
     slideNext();
@@ -229,6 +232,8 @@ public class KeystrokeSimulator {
     currentDate = new Date();
     if (currentDate.getTime() - lastActionDate.getTime() > actionRepeatTime)
     {
+      // Inform the user
+      Toolkit.getDefaultToolkit().beep();
       robot.keyPress(inputKey);
       robot.keyRelease(inputKey);
       lastActionDate = new Date();
